@@ -1,0 +1,4 @@
+# Shell scripts must keep LF endings. A Windows clone with core.autocrlf=true
+# otherwise produces `bad interpreter: /usr/bin/env bash^M` under Git Bash or WSL.
+*.sh text eol=lf
+*.ps1 text eol=crlf

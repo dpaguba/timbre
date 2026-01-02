@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+*.tsbuildinfo
+*.local
+
+# Whisper model cache (downloaded on first run)
+models/
+*.bin
+
+# Runtime data
+backend/data/
+uploads/
+outputs/
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Desktop build output
+desktop/src-tauri/target/
+desktop/src-tauri/server/
+desktop/src-tauri/licenses/
+desktop/src-tauri/gen/schemas/
+desktop/node_modules/
+backend/build/
+backend/dist/
