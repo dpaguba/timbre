@@ -1,0 +1,11 @@
+# Upper bounds keep a fresh clone installable a year from now: every one of
+# these has shipped a breaking change inside a minor release before.
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.29,<1.0
+# 0.0.18 carries the fix for CVE-2024-53981 (multipart denial of service).
+python-multipart>=0.0.18,<0.1
+pydantic>=2.6,<3.0
+# 1.1.0 is the first release with the `multilingual` argument that
+# transcription.py passes to model.transcribe(). 1.0.3 raises TypeError.
+faster-whisper>=1.1.0,<2.0
+python-docx>=1.1.0,<2.0
