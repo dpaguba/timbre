@@ -1,0 +1,16 @@
+# Ruff configuration for the Timbre backend.
+target-version = "py310"
+
+# The code is written to about 110 columns. 120 accepts it as authored rather
+# than forcing a reformat of working files.
+line-length = 120
+
+[lint]
+# BLE is enabled because the code already carries `# noqa: BLE001` directives,
+# which only make sense with the rule switched on.
+select = ["E", "F", "I", "B", "UP", "RUF", "BLE"]
+
+# B008 forbids function calls in argument defaults. FastAPI's dependency system
+# is built on exactly that: `file: UploadFile = File(...)` is the documented way
+# to declare an upload, and rewriting it would break the signature FastAPI reads.
+ignore = ["B008"]
