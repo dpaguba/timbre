@@ -1,0 +1,20 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "What the main window is allowed to do.",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "dialog:allow-open",
+    "dialog:allow-save",
+    "dialog:allow-message",
+    "fs:allow-write-text-file",
+    "opener:allow-open-url",
+    "opener:allow-open-path",
+    "notification:default",
+    "core:window:allow-set-progress-bar"
+  ]
+}

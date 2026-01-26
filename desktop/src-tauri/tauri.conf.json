@@ -1,0 +1,76 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Timbre",
+  "version": "0.1.0",
+  "identifier": "one.timbre.app",
+  "build": {
+    "frontendDist": "../../frontend/dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Timbre",
+        "url": "index.html",
+        "width": 1180,
+        "height": 820,
+        "minWidth": 720,
+        "minHeight": 560,
+        "center": true,
+        "resizable": true,
+        "titleBarStyle": "Overlay",
+        "hiddenTitle": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": [
+      "dmg",
+      "app",
+      "nsis"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": [
+      "server/**/*",
+      "licenses/*"
+    ],
+    "copyright": "\u00a9 2026 Dmytro Pahuba. Source under MIT; this build is a combined work distributed under GPL-2.0-or-later. See NOTICE.md.",
+    "shortDescription": "Local audio and video transcription",
+    "longDescription": "Transcribe audio and video into one document. Everything runs on your machine; nothing is uploaded.",
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "signingIdentity": "-"
+    },
+    "fileAssociations": [
+      {
+        "ext": [
+          "mp3",
+          "wav",
+          "m4a",
+          "flac",
+          "ogg",
+          "opus",
+          "mp4",
+          "mov",
+          "m4v",
+          "mkv",
+          "avi",
+          "webm"
+        ],
+        "name": "Audio or video",
+        "description": "Media Timbre can transcribe",
+        "role": "Viewer"
+      }
+    ]
+  }
+}
