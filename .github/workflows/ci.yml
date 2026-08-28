@@ -104,6 +104,17 @@ jobs:
         with:
           workspaces: desktop/src-tauri
 
+      # tauri.conf.json declares both directories as bundle resources, and the
+      # build script fails when a resource glob matches nothing. The release
+      # workflow stages the real server; a lint run only needs the path to
+      # exist, so a placeholder stands in for the 180 MB payload.
+      - name: Stage the bundle resources
+        run: |
+          mkdir -p desktop/src-tauri/server
+          echo "Placeholder. The release workflow stages the packaged server here." \
+            > desktop/src-tauri/server/README
+          cp -R licenses desktop/src-tauri/licenses
+
       - name: Format
         working-directory: desktop/src-tauri
         run: cargo fmt --check
