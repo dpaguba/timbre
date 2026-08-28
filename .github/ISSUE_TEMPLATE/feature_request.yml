@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest something Timbre should do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: >
+        Describe the situation rather than the solution. Knowing the problem
+        usually changes what the right feature is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you have in mind
+      description: Optional. How you imagine it working.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you do today instead
+      description: Optional. Workarounds, other tools, or nothing.
