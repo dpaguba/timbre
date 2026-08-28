@@ -1,0 +1,130 @@
+name: release
+
+# Tag a version to publish. The job builds one artifact per platform, because
+# the Python payload carries 100+ compiled extensions and cannot be
+# cross-compiled.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            target: aarch64-apple-darwin
+            label: macos-arm64
+          # macos-15-intel is the Intel image that replaced macos-13, which was
+          # retired in December 2025. GitHub supports it until August 2027.
+          - os: macos-15-intel
+            target: x86_64-apple-darwin
+            label: macos-x64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            label: windows-x64
+
+    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.label }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            desktop/src-tauri/target
+          key: ${{ matrix.label }}-cargo-${{ hashFiles('desktop/src-tauri/Cargo.toml') }}
+
+      - name: Build the frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build the server
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+          pyinstaller timbre-server.spec --noconfirm
+
+      # The shell loads the server from its resources, so it has to be in place
+      # before the bundle is assembled.
+      - name: Stage the server as a resource
+        shell: bash
+        run: |
+          rm -rf desktop/src-tauri/server
+          cp -R backend/dist/timbre-server desktop/src-tauri/server
+
+      # GPL and LGPL both require the licence text to accompany the binary.
+      - name: Stage the licences as a resource
+        shell: bash
+        run: |
+          rm -rf desktop/src-tauri/licenses
+          cp -R licenses desktop/src-tauri/licenses
+
+      - name: Build the app
+        working-directory: desktop
+        run: |
+          npm install
+          npx tauri build --target ${{ matrix.target }}
+
+      # Ad-hoc signing happens inside the bundler, via macOS.signingIdentity
+      # in tauri.conf.json. Signing afterwards breaks the DMG, because the
+      # image is assembled from the app before the signature is replaced.
+      - name: Check the signature (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          APP=$(find desktop/src-tauri/target/${{ matrix.target }}/release/bundle/macos -name "*.app" -maxdepth 1)
+          codesign --verify --verbose "$APP"
+
+      - name: Collect artifacts
+        shell: bash
+        run: |
+          mkdir -p out
+          find desktop/src-tauri/target/${{ matrix.target }}/release/bundle \
+            \( -name "*.dmg" -o -name "*-setup.exe" \) \
+            -exec cp {} out/ \;
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.label }}
+          path: out/*
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Publish the release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          body_path: .github/RELEASE_NOTES.md
+          draft: true
