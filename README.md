@@ -43,9 +43,20 @@ download; there is nothing to install first.
 | Windows | `Timbre_*_x64-setup.exe` |
 
 These builds are not signed with a paid certificate yet, so the first launch
-needs one extra step. On macOS, right-click the app and choose Open, then
-confirm. On Windows, choose More info and then Run anyway. Both systems
-remember the decision.
+needs one extra step. Both systems remember the decision afterwards.
+
+**macOS.** Drag the app to Applications and open it once. macOS refuses and
+offers only Move to Trash: choose **Done** instead. Then go to System Settings,
+Privacy & Security, scroll to the bottom, and press **Open Anyway** beside the
+message about Timbre. Control-clicking the app no longer works; macOS Sequoia
+removed that shortcut. One command does the same thing:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Timbre.app
+```
+
+**Windows.** SmartScreen shows "Windows protected your PC". Choose More info,
+then Run anyway.
 
 The first run downloads one transcription model, about 480 MB for the
 recommended one. That is the only time the app uses the network. Everything
